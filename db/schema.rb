@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170824033130) do
+ActiveRecord::Schema.define(version: 20170824040559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "labels", force: :cascade do |t|
+    t.string "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "labels_messages", id: false, force: :cascade do |t|
+    t.bigint "label_id", null: false
+    t.bigint "message_id", null: false
+    t.index ["label_id"], name: "index_labels_messages_on_label_id"
+    t.index ["message_id"], name: "index_labels_messages_on_message_id"
+  end
 
   create_table "messages", force: :cascade do |t|
     t.bigint "from_id", null: false
@@ -45,6 +58,8 @@ ActiveRecord::Schema.define(version: 20170824033130) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "labels_messages", "labels"
+  add_foreign_key "labels_messages", "messages"
   add_foreign_key "messages", "users", column: "from_id"
   add_foreign_key "messages", "users", column: "to_id"
 end
